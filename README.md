@@ -11,7 +11,6 @@ A simple task management application with filtering capabilities.
   - All tasks
   - Active tasks
   - Completed tasks
-- Automatic saving to localStorage
 
 ## Technologies Used
 
