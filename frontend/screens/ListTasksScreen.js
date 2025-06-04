@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useCallback } from 'react';
 import { TaskContext } from '../context/TaskContext';
 import { 
   View, 
@@ -27,6 +27,7 @@ export default function ListTasksScreen({ route }) {
   const [localTasks, setLocalTasks] = useState(
     tasks.filter(task => task.listId === listId)
   );
+
   const [newTaskTitle, setNewTaskTitle] = useState('');
   const [newTaskText, setNewTaskText] = useState('');
   const [addTaskModalVisible, setAddTaskModalVisible] = useState(false);
@@ -42,16 +43,29 @@ export default function ListTasksScreen({ route }) {
   const [selectedSound, setSelectedSound] = useState('default');
   const [priority, setPriority] = useState('medium');
 
-  useEffect(() => {
-    setTasks(prevTasks => [
-      ...prevTasks.filter(task => task.listId !== listId),
-      ...localTasks
-    ]);
-  }, [localTasks]);
+  const setTasksCallback = useCallback((newTasks) => {
+    setTasks(newTasks);
+  }, [setTasks]);
 
   useEffect(() => {
-    setLocalTasks(tasks.filter(task => task.listId === listId));
-  }, [tasks]);
+    const tasksFromOtherLists = tasks.filter(task => task.listId !== listId);
+    const hasChanges = JSON.stringify([...tasksFromOtherLists, ...localTasks]) !== JSON.stringify(tasks);
+    
+    if (hasChanges) {
+      setTasks([...tasksFromOtherLists, ...localTasks]);
+    }
+  }, [localTasks, listId]); // Adicione outras dependências se necessário
+
+  // Atualiza as tarefas locais apenas quando as tarefas do contexto mudarem
+  // e não forem causadas por uma atualização local
+  useEffect(() => {
+    const newTasks = tasks.filter(task => task.listId === listId);
+    const hasChanges = JSON.stringify(newTasks) !== JSON.stringify(localTasks);
+    
+    if (hasChanges) {
+      setLocalTasks(newTasks);
+    }
+  }, [tasks, listId]);
 
   const handleAddTask = () => {
     if (newTaskTitle.trim() === '' || newTaskText.trim() === '') {
@@ -128,17 +142,33 @@ export default function ListTasksScreen({ route }) {
   };
 
   const sortedTasks = [...localTasks].sort((a, b) => {
-    if (a.completed && !b.completed) return 1;
-    if (!a.completed && b.completed) return -1;
-    if (a.priority === 'high' && b.priority !== 'high') return -1;
-    if (a.priority !== 'high' && b.priority === 'high') return 1;
-    if (a.priority === 'medium' && b.priority === 'low') return -1;
-    if (a.priority === 'low' && b.priority === 'medium') return 1;
-    const aIsOverdue = a.dueDate && new Date(a.dueDate) < new Date() && !a.completed;
-    const bIsOverdue = b.dueDate && new Date(b.dueDate) < new Date() && !b.completed;
-    if (aIsOverdue && !bIsOverdue) return -1;
-    if (!aIsOverdue && bIsOverdue) return 1;
-    return new Date(b.createdAt) - new Date(a.createdAt);
+    // Tarefas concluídas vão para o final da lista
+    if (a.completed && b.completed) {
+      // Ordene as tarefas concluídas pela data de conclusão
+      return new Date(b.completedAt) - new Date(a.completedAt);
+    }
+
+    // Tarefas pendentes vão para o topo da lista
+    if (!a.completed && !b.completed) {
+      // Ordene as tarefas pendentes por prioridade
+      if (a.priority === 'high' && b.priority !== 'high') return -1;
+      if (a.priority !== 'high' && b.priority === 'high') return 1;
+      if (a.priority === 'medium' && b.priority === 'low') return -1;
+      if (a.priority === 'low' && b.priority === 'medium') return 1;
+
+      // Se as prioridades forem iguais, ordene pela proximidade ao dia atual
+      const aDueDate = a.dueDate ? new Date(a.dueDate) : Infinity;
+      const bDueDate = b.dueDate ? new Date(b.dueDate) : Infinity;
+      if (aDueDate < bDueDate) return -1;
+      if (aDueDate > bDueDate) return 1;
+
+      // Se as datas de prazo forem iguais, ordene pela data de criação
+      return new Date(b.createdAt) - new Date(a.createdAt);
+    }
+
+    // Se uma tarefa for concluída e a outra não, a concluída vai para o final
+    if (a.completed) return 1;
+    if (b.completed) return -1;
   });
 
   const formatDateTime = (dateString) => {
@@ -358,7 +388,6 @@ export default function ListTasksScreen({ route }) {
                 <TouchableOpacity 
                   style={styles.datetimeButton}
                   onPress={() => {
-                    console.log('Abrindo date picker'); // Adicione isso
                     setShowDatePicker(true);
                   }}
                 >
@@ -371,7 +400,6 @@ export default function ListTasksScreen({ route }) {
                 <TouchableOpacity 
                   style={styles.datetimeButton}
                   onPress={() => {
-                    console.log('Abrindo time picker'); // Adicione isso
                     setShowTimePicker(true);
                   }}
                   disabled={!selectedDueDate}
@@ -502,7 +530,6 @@ export default function ListTasksScreen({ route }) {
                 <TouchableOpacity 
                   style={styles.datetimeButton}
                   onPress={() => {
-                    console.log('Abrindo date picker'); // Adicione isso
                     setShowDatePicker(true);
                   }}
                 >
@@ -515,7 +542,6 @@ export default function ListTasksScreen({ route }) {
                 <TouchableOpacity 
                   style={styles.datetimeButton}
                   onPress={() => {
-                    console.log('Abrindo time picker'); // Adicione isso
                     setShowTimePicker(true);
                   }}
                   disabled={!selectedDueDate}

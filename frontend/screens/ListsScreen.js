@@ -349,7 +349,8 @@ const getStyles = (theme) => StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: theme === 'light' ? '#fff' : '#36393f',
+    backgroundColor: theme === 'light' ? '#fff' : 
+                     theme === 'dark' ? '#36393f' : '#202225',
   },
   title: {
     fontSize: 24,
