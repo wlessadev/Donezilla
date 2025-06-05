@@ -1,4 +1,4 @@
-# Task List Project
+# Donezilla - Task List Project
 
 A simple task management application with filtering capabilities.
 
