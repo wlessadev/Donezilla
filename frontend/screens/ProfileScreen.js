@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, Switch, StyleSheet, TouchableOpacity, TextInput, Alert, Image, Modal } from 'react-native';
 import { useTheme } from '../context/ThemeContext';
 import ThemeToggle from '../components/ThemeToggle';
 import * as ImagePicker from 'expo-image-picker';
 import { Ionicons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function ProfileScreen() {
   const { theme } = useTheme();
@@ -11,13 +12,15 @@ export default function ProfileScreen() {
 
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [avatar, setAvatar] = useState(null);
-  const [name, setName] = useState('John Doe');
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('john@example.com');
   const [currentEmail, setCurrentEmail] = useState('');
   const [newEmail, setNewEmail] = useState('');
   const [confirmNewEmail, setConfirmNewEmail] = useState('');
   const [isEditing, setIsEditing] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
+
+  
 
   const handleImagePress = () => {
     setModalVisible(true);
@@ -64,9 +67,63 @@ export default function ProfileScreen() {
     );
   };
 
+  useEffect(() => {
+    const loadName = async () => {
+      try {
+        const storedName = await AsyncStorage.getItem('username');
+        if (storedName !== null) {
+          setName(storedName);
+        }
+      } catch (error) {
+        console.error('Failed to load name:', error);
+      }
+    };
+    
+    loadName();
+  }, []);
+
+// Função para salvar o nome quando ele muda
+  const handleUpdateName = async () => {
+    try {
+      if (name.trim() === '') {
+        Alert.alert('Error', 'Name cannot be empty');
+        return;
+      }
+      
+      await AsyncStorage.setItem('username', name);
+      Alert.alert('Success', 'Name updated successfully');
+    } catch (error) {
+      console.error('Failed to save name:', error);
+      Alert.alert('Error', 'Failed to update name');
+    }
+  };
+  
+  useEffect(() => {
+    const saveName = async () => {
+      if (name.trim() !== '') {
+        try {
+          await AsyncStorage.setItem('username', name);
+        } catch (error) {
+          console.error('Failed to save name:', error);
+        }
+      }
+    };
+    
+    const timer = setTimeout(() => {
+      saveName();
+    }, 1000); // Debounce de 1 segundo
+    
+    return () => clearTimeout(timer);
+  }, [name]);
+
   const handleUpdateEmail = () => {
     if (currentEmail !== email) {
       Alert.alert('Error', 'Current email is incorrect');
+      return;
+    }
+
+    if (newEmail.trim() === '') {
+      Alert.alert('Error', 'New email cannot be empty');
       return;
     }
 
@@ -154,13 +211,21 @@ export default function ProfileScreen() {
         
         <View style={styles.settingItem}>
           <Text style={styles.settingLabel}>Name</Text>
-          <TextInput
-            style={styles.input}
-            value={name}
-            onChangeText={setName}
-            placeholder="Enter your name"
-            placeholderTextColor={theme === 'light' ? '#999' : '#666'}
-          />
+          <View style={styles.nameContainer}>
+            <TextInput
+              style={[styles.input, styles.nameInput]}
+              value={name}
+              onChangeText={setName}
+              placeholder="Enter your name"
+              placeholderTextColor={theme === 'light' ? '#999' : '#666'}
+            />
+            <TouchableOpacity 
+              style={[styles.saveButton, styles.nameSaveButton]} 
+              onPress={handleUpdateName}
+            >
+              <Text style={styles.buttonText}>Save</Text>
+            </TouchableOpacity>
+          </View>
         </View>
 
         {isEditing ? (
@@ -392,5 +457,17 @@ const getStyles = (theme) => StyleSheet.create({
     backgroundColor: 'transparent',
     borderWidth: 1,
     borderColor: '#ff4444',
+  },
+  nameContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  nameInput: {
+    flex: 3,
+    marginRight: 10,
+  },
+  nameSaveButton: {
+    width: 40,
+    paddingVertical: 12,
   },
 });
