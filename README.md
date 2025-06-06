@@ -20,6 +20,6 @@
     Wagner C. Lessa - Created on 3-6-2025
   </div>
   <div style="width: 35%; text-align: center;">
-    <img src="./frontend/assets/donezilla_full_logo.png" alt="Donezilla Logo" width="100%" style="max-width: 450px;"/>
+    <img src="./frontend/assets/donezilla_full_logo.png" alt="Donezilla Logo" width="100%" style="max-width: 300px;"/>
   </div>
 </div>
