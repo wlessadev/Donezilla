@@ -1,21 +1,33 @@
-# Donezilla - Task List Project
+# 🦖 Donezilla - Task List Project
+<div style="width:100%;">
+  <img src="./frontend/assets/donezilla_full_logo.png" alt="Donezilla Logo" width="250" style="align-self:center;"/>  
+</div>
 
-A simple task management application with filtering capabilities.
 
-## Features
+A simple and efficient task management application with filtering capabilities.
 
-- Add new tasks
-- Mark tasks as completed
-- Remove tasks
-- Filter tasks by:
-  - All tasks
-  - Active tasks
-  - Completed tasks
+---
 
-## Technologies Used
+## 🚀 Features
 
-- React Native
+- ✅ Add new tasks  
+- 🔄 Mark tasks as completed  
+- ❌ Remove tasks  
+- 🎯 Filter tasks by:
+  -  All tasks  
+  -  Active tasks  
+  -  Completed tasks  
 
-## Author
+---
 
-Wagner C. Lessa - Created on 3-6-2025
+## 🛠️ Technologies Used
+
+- ⚛️ React Native  
+- 🌐 Node.js  
+
+---
+
+## 👤 Author
+
+**Wagner C. Lessa**  
+🗓️ *Created on June 3, 2025*
