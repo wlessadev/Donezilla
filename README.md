@@ -14,9 +14,9 @@ A simple and efficient task management application with filtering capabilities.
 - 🔄 Mark tasks as completed  
 - ❌ Remove tasks  
 - 🎯 Filter tasks by:
-  - 📋 All tasks  
-  - 🔧 Active tasks  
-  - ✔️ Completed tasks  
+  -  All tasks  
+  -  Active tasks  
+  -  Completed tasks  
 
 ---
 
