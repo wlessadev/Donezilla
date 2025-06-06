@@ -1,6 +1,6 @@
 # Donezilla - Task List Project  
 
-![Donezilla Logo](./frontend/assets/donezilla-full-logo.png)  
+![Donezilla Logo](./frontend/assets/donezilla_full_logo.png)  
 
 A simple task management application with filtering capabilities.  
 
