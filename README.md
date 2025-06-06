@@ -10,10 +10,10 @@ A simple and efficient task management application with filtering capabilities.
 
 ## 🚀 Features
 
-- ✅ Add new tasks  
-- 🔄 Mark tasks as completed  
-- ❌ Remove tasks  
-- 🎯 Filter tasks by:
+- Add new tasks  
+- Mark tasks as completed  
+-  Remove tasks  
+- Filter tasks by:
   -  All tasks  
   -  Active tasks  
   -  Completed tasks  
@@ -22,12 +22,12 @@ A simple and efficient task management application with filtering capabilities.
 
 ## 🛠️ Technologies Used
 
-- ⚛️ React Native  
-- 🌐 Node.js  
+- React Native, Node.js e TypeScrypt
 
 ---
 
 ## 👤 Author
 
 **Wagner C. Lessa**  
+
 🗓️ *Created on June 3, 2025*
